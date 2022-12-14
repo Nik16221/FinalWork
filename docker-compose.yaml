@@ -4,7 +4,7 @@ services:
   db:
     image: postgres:12.4-alpine
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - pg_data:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -14,13 +14,10 @@ services:
     - "${POSTGRES_PORT:-5432}:5432"
 
     healthcheck:
-      test: postgres_isready -U ${POSTGRES_USER} - d ${POSTGRES_DB}
+      test: pg_isready -U ${POSTGRES_USER} - d ${POSTGRES_DB}
       interval: 3s
       timeout: 3s
       retries: 3
-
-
-
 
 volumes:
   postgres_data:
