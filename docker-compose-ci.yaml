@@ -9,44 +9,47 @@ services:
     ports:
       - "80:80"
   api:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: nbasov3/finalwork
+    image: nbasov3/finalwork:$GITHUB_REF_NAME-$GITHUB_RUN_ID
     restart: always
-    env_file:
-      - .env
+    environment:
+      DEBUG: ${DEBUG}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      SECRET_KEY: ${SECRET_KEY}
     depends_on:
       db:
         condition: service_healthy
       migrations:
         condition: service_completed_successfully
     ports:
-      - '8000:8000'
+      - "8000:8000"
   migrations:
-    build: .
-    image: nbasov3/finalwork
+    image: nbasov3/finalwork:$GITHUB_REF_NAME-$GITHUB_RUN_ID
+    environment:
+      DEBUG: ${DEBUG}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      SECRET_KEY: ${SECRET_KEY}
     depends_on:
       db:
         condition: service_healthy
-    env_file:
-      - .env
     command: >
       sh -c "python manage.py migrate"
   db:
     image: postgres:12.4-alpine
-    volumes:
-      - ./pg_data:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
-    restart: on-failure
-    env_file:
-      - .env
+    restart: always
     ports:
-    - "${POSTGRES_PORT:-5432}:5432"
-
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - ./pg_data:/var/lib/postgresql/data
     healthcheck:
       test: pg_isready -U ${POSTGRES_USER} - d ${POSTGRES_DB}
       interval: 3s
