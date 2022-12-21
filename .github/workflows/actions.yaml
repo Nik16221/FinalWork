@@ -24,7 +24,7 @@ jobs:
       SECRET_KEY: ${{ secrets.SECRET_KEY }}
     steps:
       - name: checkout
-        uses: workflows/checkout@v2
+        uses: actions/checkout@v3
       - name: render config
         run: |
           mkdir deploy
