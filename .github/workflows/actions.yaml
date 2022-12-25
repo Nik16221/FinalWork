@@ -38,6 +38,7 @@ jobs:
           source: "deploy/docker-compose.yaml"
           target: "todolist"
           strip_components: 1
+          script: pwd
       - name: run
         uses: appleboy/ssh-action@master
         with:
