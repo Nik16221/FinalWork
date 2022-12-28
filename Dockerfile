@@ -2,7 +2,7 @@ FROM python:3.10
 
 ENV PYTHONBUFFERED 1
 
-WORKDIR /deploy
+WORKDIR /app
 
 COPY requirements.txt .
 
